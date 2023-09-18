@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,23 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#include "../../inc/MarlinConfig.h"
 
-#include "../../inc/MarlinConfigPre.h"
-
-#if ENABLED(EXPECTED_PRINTER_CHECK)
+#if HAS_LCD_BRIGHTNESS
 
 #include "../gcode.h"
-#include "../../MarlinCore.h"
 #include "../../lcd/marlinui.h"
 
 /**
- * M16: Expected Printer Check
+ * M256: Set the LCD brightness
  */
-void GcodeSuite::M16() {
-
-  if (strcmp_P(parser.string_arg, PSTR(MACHINE_NAME)))
-    kill(GET_TEXT_F(MSG_KILL_EXPECTED_PRINTER));
-
+void GcodeSuite::M256() {
+  if (parser.seenval('B'))
+    ui.set_brightness(parser.value_int());
+  else
+    M256_report();
 }
 
-#endif // EXPECTED_PRINTER_CHECK
+void GcodeSuite::M256_report(const bool forReplay/*=true*/) {
+  report_heading_etc(forReplay, F(STR_LCD_BRIGHTNESS));
+  SERIAL_ECHOLNPGM("  M256 B", ui.brightness);
+}
+
+#endif // HAS_LCD_BRIGHTNESS

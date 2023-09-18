@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,27 +19,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_LCD_CONTRAST
+#if HAS_GCODE_M255
 
 #include "../gcode.h"
 #include "../../lcd/marlinui.h"
 
 /**
- * M250: Read and optionally set the LCD contrast
+ * M255: Set the LCD sleep timeout (in minutes)
+ *  S<minutes> - Period of inactivity required for display / backlight sleep
  */
-void GcodeSuite::M250() {
-  if (LCD_CONTRAST_MIN < LCD_CONTRAST_MAX && parser.seenval('C'))
-    ui.set_contrast(parser.value_byte());
+void GcodeSuite::M255() {
+  if (parser.seenval('S')) {
+    const int m = parser.value_int();
+    #if HAS_DISPLAY_SLEEP
+      ui.sleep_timeout_minutes = constrain(m, ui.sleep_timeout_min, ui.sleep_timeout_max);
+    #else
+      ui.backlight_timeout_minutes = constrain(m, ui.backlight_timeout_min, ui.backlight_timeout_max);
+    #endif
+  }
   else
-    M250_report();
+    M255_report();
 }
 
-void GcodeSuite::M250_report(const bool forReplay/*=true*/) {
-  report_heading_etc(forReplay, F(STR_LCD_CONTRAST));
-  SERIAL_ECHOLNPGM("  M250 C", ui.contrast);
+void GcodeSuite::M255_report(const bool forReplay/*=true*/) {
+  report_heading_etc(forReplay, F(STR_DISPLAY_SLEEP));
+  SERIAL_ECHOLNPGM("  M255 S",
+    TERN(HAS_DISPLAY_SLEEP, ui.sleep_timeout_minutes, ui.backlight_timeout_minutes),
+    " ; (minutes)"
+  );
 }
 
-#endif // HAS_LCD_CONTRAST
+#endif // HAS_GCODE_M255

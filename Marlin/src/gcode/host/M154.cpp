@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,20 +22,19 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if ENABLED(EXPECTED_PRINTER_CHECK)
+#if ENABLED(AUTO_REPORT_POSITION)
 
 #include "../gcode.h"
-#include "../../MarlinCore.h"
-#include "../../lcd/marlinui.h"
+#include "../../module/motion.h"
 
 /**
- * M16: Expected Printer Check
+ * M154: Set position auto-report interval. M154 S<seconds>
  */
-void GcodeSuite::M16() {
+void GcodeSuite::M154() {
 
-  if (strcmp_P(parser.string_arg, PSTR(MACHINE_NAME)))
-    kill(GET_TEXT_F(MSG_KILL_EXPECTED_PRINTER));
+  if (parser.seenval('S'))
+    position_auto_reporter.set_interval(parser.value_byte());
 
 }
 
-#endif // EXPECTED_PRINTER_CHECK
+#endif // AUTO_REPORT_POSITION
