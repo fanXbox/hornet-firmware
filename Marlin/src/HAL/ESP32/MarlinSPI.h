@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,14 +21,6 @@
  */
 #pragma once
 
-#include <HardwareSerial.h>
+#include <SPI.h>
 
-#include "../shared/Marduino.h"
-#include "../../core/serial_hook.h"
-
-class FlushableHardwareSerial : public HardwareSerial {
-public:
-  FlushableHardwareSerial(int uart_nr) : HardwareSerial(uart_nr) {}
-};
-
-extern Serial1Class<FlushableHardwareSerial> flushableSerial;
+using MarlinSPI = SPIClass;
