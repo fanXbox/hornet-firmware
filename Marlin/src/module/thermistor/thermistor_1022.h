@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,13 +21,25 @@
  */
 #pragma once
 
-// User-defined table 2
-// Dummy Thermistor table.. It will ALWAYS read a fixed value.
-#ifndef DUMMY_THERMISTOR_999_VALUE
-  #define DUMMY_THERMISTOR_999_VALUE 25
-#endif
+#define REVERSE_TEMP_SENSOR_RANGE_1022 1
 
-constexpr temp_entry_t temptable_999[] PROGMEM = {
-  { OV(   1), DUMMY_THERMISTOR_999_VALUE },
-  { OV(1023), DUMMY_THERMISTOR_999_VALUE }
+// Pt1000 with 1k0 pullup
+constexpr temp_entry_t temptable_1022[] PROGMEM = {
+  PtLine(  0, 1000, 2200),
+  PtLine( 25, 1000, 2200),
+  PtLine( 50, 1000, 2200),
+  PtLine( 75, 1000, 2200),
+  PtLine(100, 1000, 2200),
+  PtLine(125, 1000, 2200),
+  PtLine(150, 1000, 2200),
+  PtLine(175, 1000, 2200),
+  PtLine(200, 1000, 2200),
+  PtLine(225, 1000, 2200),
+  PtLine(250, 1000, 2200),
+  PtLine(275, 1000, 2200),
+  PtLine(300, 1000, 2200),
+  PtLine(350, 1000, 2200),
+  PtLine(400, 1000, 2200),
+  PtLine(450, 1000, 2200),
+  PtLine(500, 1000, 2200)
 };
