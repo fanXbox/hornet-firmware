@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,20 +20,29 @@
  *
  */
 
+#include "../../inc/MarlinConfig.h"
+
+#if HAS_FANCHECK
+
 #include "../gcode.h"
-#include "../../core/serial.h"
-#include "../../module/printcounter.h"
-#include "../../libs/duration_t.h"
-#include "../../lcd/marlinui.h"
+#include "../../feature/fancheck.h"
 
 /**
- * M31: Get the time since the start of SD Print (or last M109)
+ * M123: Report fan states -or- set interval for auto-report
+ *
+ *   S<seconds> : Set auto-report interval
  */
-void GcodeSuite::M31() {
-  char buffer[22];
-  duration_t(print_job_timer.duration()).toString(buffer);
+void GcodeSuite::M123() {
 
-  ui.set_status(buffer, ENABLED(DWIN_LCD_PROUI));
+  #if ENABLED(AUTO_REPORT_FANS)
+    if (parser.seenval('S')) {
+      fan_check.auto_reporter.set_interval(parser.value_byte());
+      return;
+    }
+  #endif
 
-  SERIAL_ECHO_MSG("Print time: ", buffer);
+  fan_check.print_fan_states();
+
 }
+
+#endif // HAS_FANCHECK

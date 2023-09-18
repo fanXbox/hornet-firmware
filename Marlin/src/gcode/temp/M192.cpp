@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,21 +20,37 @@
  *
  */
 
+/**
+ * M192.cpp - Wait for probe to reach temperature
+ */
+
 #include "../../inc/MarlinConfig.h"
 
-#if BOTH(AUTO_REPORT_TEMPERATURES, HAS_TEMP_SENSOR)
+#if HAS_TEMP_PROBE
 
 #include "../gcode.h"
 #include "../../module/temperature.h"
+#include "../../lcd/marlinui.h"
 
 /**
- * M155: Set temperature auto-report interval. M155 S<seconds>
+ * M192: Wait for probe temperature sensor to reach a target
+ *
+ * Select only one of these flags:
+ *    R - Wait for heating or cooling
+ *    S - Wait only for heating
  */
-void GcodeSuite::M155() {
+void GcodeSuite::M192() {
+  if (DEBUGGING(DRYRUN)) return;
 
-  if (parser.seenval('S'))
-    thermalManager.auto_reporter.set_interval(parser.value_byte());
+  const bool no_wait_for_cooling = parser.seenval('S');
+  if (!no_wait_for_cooling && !parser.seenval('R')) {
+    SERIAL_ERROR_MSG("No target temperature set.");
+    return;
+  }
 
+  const celsius_t target_temp = parser.value_celsius();
+  thermalManager.isProbeBelowTemp(target_temp) ? LCD_MESSAGE(MSG_PROBE_HEATING) : LCD_MESSAGE(MSG_PROBE_COOLING);
+  thermalManager.wait_for_probe(target_temp, no_wait_for_cooling);
 }
 
-#endif // AUTO_REPORT_TEMPERATURES && HAS_TEMP_SENSOR
+#endif // HAS_TEMP_PROBE
