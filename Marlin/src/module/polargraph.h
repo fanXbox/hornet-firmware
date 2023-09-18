@@ -21,21 +21,15 @@
  */
 #pragma once
 
-#include <stdint.h>
+/**
+ * polargraph.h - Polargraph-specific functions
+ */
 
-//
-// Utility functions to create and print hex strings as nybble, byte, and word.
-//
+#include "../core/types.h"
+#include "../core/macros.h"
 
-constexpr char hex_nybble(const uint8_t n) {
-  return (n & 0xF) + ((n & 0xF) < 10 ? '0' : 'A' - 10);
-}
-char* hex_byte(const uint8_t b);
-char* hex_word(const uint16_t w);
-char* hex_address(const void * const w);
+extern float segments_per_second;
+extern xy_pos_t draw_area_min, draw_area_max;
+extern float polargraph_max_belt_len;
 
-void print_hex_nybble(const uint8_t n);
-void print_hex_byte(const uint8_t b);
-void print_hex_word(const uint16_t w);
-void print_hex_address(const void * const w);
-void print_hex_long(const uint32_t w, const char delimiter);
+void inverse_kinematics(const xyz_pos_t &raw);

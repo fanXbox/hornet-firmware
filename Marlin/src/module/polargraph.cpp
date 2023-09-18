@@ -19,23 +19,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
-#include <stdint.h>
+/**
+ * polargraph.cpp
+ */
 
-//
-// Utility functions to create and print hex strings as nybble, byte, and word.
-//
+#include "../inc/MarlinConfig.h"
 
-constexpr char hex_nybble(const uint8_t n) {
-  return (n & 0xF) + ((n & 0xF) < 10 ? '0' : 'A' - 10);
+#if ENABLED(POLARGRAPH)
+
+#include "polargraph.h"
+#include "motion.h"
+
+// For homing:
+#include "planner.h"
+#include "endstops.h"
+#include "../lcd/marlinui.h"
+#include "../MarlinCore.h"
+
+// Initialized by settings.load()
+float segments_per_second, polargraph_max_belt_len;
+xy_pos_t draw_area_min, draw_area_max;
+
+void inverse_kinematics(const xyz_pos_t &raw) {
+  const float x1 = raw.x - draw_area_min.x, x2 = draw_area_max.x - raw.x, y = raw.y - draw_area_max.y;
+  delta.set(HYPOT(x1, y), HYPOT(x2, y), raw.z);
 }
-char* hex_byte(const uint8_t b);
-char* hex_word(const uint16_t w);
-char* hex_address(const void * const w);
 
-void print_hex_nybble(const uint8_t n);
-void print_hex_byte(const uint8_t b);
-void print_hex_word(const uint16_t w);
-void print_hex_address(const void * const w);
-void print_hex_long(const uint32_t w, const char delimiter);
+#endif // POLARGRAPH
