@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,15 +21,6 @@
  */
 #pragma once
 
-#include "../../../inc/MarlinConfigPre.h"
-#include "../../shared/Marduino.h"
-#include <U8glib-HAL.h>
+#include <SPI.h>
 
-void u8g_SetPIOutput_DUE(u8g_t *u8g, uint8_t pin_index);
-void u8g_SetPILevel_DUE(u8g_t *u8g, uint8_t pin_index, uint8_t level);
-
-void u8g_spiSend_sw_DUE_mode_0(uint8_t val);
-void u8g_spiSend_sw_DUE_mode_3(uint8_t val);
-
-extern Pio *SCK_pPio, *MOSI_pPio;
-extern uint32_t SCK_dwMask, MOSI_dwMask;
+using MarlinSPI = SPIClass;
