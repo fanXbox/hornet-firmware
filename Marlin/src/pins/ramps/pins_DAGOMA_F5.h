@@ -21,21 +21,48 @@
  */
 #pragma once
 
-/**
- * KFB 2.0 – Arduino Mega2560 with RAMPS v1.4 pin assignments
- * ATmega2560
- */
+// ATmega2560
 
 #if HOTENDS > 2 || E_STEPPERS > 2
-  #error "KFB 2.0 supports up to 2 hotends / E steppers."
+  #error "Dagoma3D F5 supports up to 2 hotends / E steppers."
 #endif
 
-#define BOARD_INFO_NAME "KFB 2.0"
+#define BOARD_INFO_NAME "Dagoma3D F5"
 
 //
-// Heaters / Fans
+// Endstops
 //
-// Power outputs BEEF or BEFF
-#define MOSFET_D_PIN        7
+#define X_STOP_PIN                             2
+#define Y_STOP_PIN                             3
+#define Z_STOP_PIN                            15
 
+#define FIL_RUNOUT_PIN                        39
+#if EXTRUDERS > 1
+  #define FIL_RUNOUT2_PIN                     14
+#endif
+
+// Alter timing for graphical display
+#if IS_U8GLIB_ST7920
+  #define BOARD_ST7920_DELAY_1                 0
+  #define BOARD_ST7920_DELAY_2               250
+  #define BOARD_ST7920_DELAY_3               250
+#endif
+
+//
+// DAC steppers
+//
+#define HAS_MOTOR_CURRENT_DAC 1
+
+#define DAC_STEPPER_ORDER { 0, 1, 2, 3 }
+
+#define DAC_STEPPER_SENSE    0.11
+#define DAC_STEPPER_ADDRESS  0
+#define DAC_STEPPER_MAX      4096
+#define DAC_STEPPER_VREF     1
+#define DAC_STEPPER_GAIN     0
+#define DAC_OR_ADDRESS       0x00
+
+//
+// Import default RAMPS 1.4 pins
+//
 #include "pins_RAMPS.h"

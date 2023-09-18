@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,23 +21,15 @@
  */
 #pragma once
 
-/**
- * Arduino Mega with RAMPS v1.3 pin assignments
- * ATmega2560, ATmega1280
- *
- * Applies to the following boards:
- *
- *  RAMPS_13_EFB (Extruder, Fan, Bed)
- *  RAMPS_13_EEB (Extruder, Extruder, Bed)
- *  RAMPS_13_EFF (Extruder, Fan, Fan)
- *  RAMPS_13_EEF (Extruder, Extruder, Fan)
- *  RAMPS_13_SF  (Spindle, Controller Fan)
- */
-
-#ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME "RAMPS 1.3"
+#if ENABLED(ALLOW_SAM3X8E)
+  #if NOT_TARGET(__SAM3X8E__, __AVR_ATmega2560__)
+    #error "Oops! Select 'Arduino Due' or 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+  #endif
+#elif ENABLED(REQUIRE_MEGA2560) && NOT_TARGET(__AVR_ATmega2560__)
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560' in 'Tools > Board.'"
+#elif DISABLED(REQUIRE_MEGA2560) && NOT_TARGET(__AVR_ATmega1280__, __AVR_ATmega2560__)
+  #error "Oops! Select 'Arduino/Genuino Mega or Mega 2560 or 1280' in 'Tools > Board.'"
 #endif
 
-#define IS_RAMPS_13
-
-#include "pins_RAMPS.h"
+#undef ALLOW_SAM3X8E
+#undef REQUIRE_MEGA2560
