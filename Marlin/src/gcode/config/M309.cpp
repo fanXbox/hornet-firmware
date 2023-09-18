@@ -22,35 +22,32 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if DISABLED(EMERGENCY_PARSER)
+#if ENABLED(PIDTEMPCHAMBER)
 
 #include "../gcode.h"
-#include "../../MarlinCore.h" // for wait_for_heatup, kill, M112_KILL_STR
-#include "../../module/motion.h" // for quickstop_stepper
+#include "../../module/temperature.h"
 
 /**
- * M108: Stop the waiting for heaters in M109, M190, M303. Does not affect the target temperature.
- */
-void GcodeSuite::M108() {
-  TERN_(HAS_RESUME_CONTINUE, wait_for_user = false);
-  wait_for_heatup = false;
-}
-
-/**
- * M112: Full Shutdown
- */
-void GcodeSuite::M112() {
-  kill(FPSTR(M112_KILL_STR), nullptr, true);
-}
-
-/**
- * M410: Quickstop - Abort all planned moves
+ * M309 - Set and/or Report the current Chamber PID values
  *
- * This will stop the carriages mid-move, so most likely they
- * will be out of sync with the stepper position after this.
+ *  P<pval> - Set the P value
+ *  I<ival> - Set the I value
+ *  D<dval> - Set the D value
  */
-void GcodeSuite::M410() {
-  quickstop_stepper();
+void GcodeSuite::M309() {
+  if (!parser.seen("PID")) return M309_report();
+  if (parser.seenval('P')) thermalManager.temp_chamber.pid.set_Kp(parser.value_float());
+  if (parser.seenval('I')) thermalManager.temp_chamber.pid.set_Ki(parser.value_float());
+  if (parser.seenval('D')) thermalManager.temp_chamber.pid.set_Kd(parser.value_float());
 }
 
-#endif // !EMERGENCY_PARSER
+void GcodeSuite::M309_report(const bool forReplay/*=true*/) {
+  report_heading_etc(forReplay, F(STR_CHAMBER_PID));
+  SERIAL_ECHOLNPGM("  M309"
+      " P", thermalManager.temp_chamber.pid.p()
+    , " I", thermalManager.temp_chamber.pid.i()
+    , " D", thermalManager.temp_chamber.pid.d()
+  );
+}
+
+#endif // PIDTEMPCHAMBER

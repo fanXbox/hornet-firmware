@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,21 +20,26 @@
  *
  */
 
-#include "../../inc/MarlinConfigPre.h"
+#include "../../inc/MarlinConfig.h"
 
-#if ENABLED(EXTERNAL_CLOSED_LOOP_CONTROLLER)
+#if ENABLED(SERVO_DETACH_GCODE)
 
 #include "../gcode.h"
-#include "../../module/planner.h"
-#include "../../feature/closedloop.h"
+#include "../../module/servo.h"
 
-void GcodeSuite::M12() {
+/**
+ * M282: Detach Servo. P<index>
+ */
+void GcodeSuite::M282() {
 
-  planner.synchronize();
+  if (!parser.seenval('P')) return;
 
-  if (parser.seenval('S'))
-    closedloop.set(parser.value_int()); // Force a CLC set
+  const int servo_index = parser.value_int();
+  if (WITHIN(servo_index, 0, NUM_SERVOS - 1))
+    servo[servo_index].detach();
+  else
+    SERIAL_ECHO_MSG("Servo ", servo_index, " out of range");
 
 }
 
-#endif
+#endif // SERVO_DETACH_GCODE
