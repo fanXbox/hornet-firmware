@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,6 +21,9 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
+// If no real or emulated EEPROM selected, fall back to SD emulation
+#if USE_FALLBACK_EEPROM
+  #define SDCARD_EEPROM_EMULATION
+#elif ANY(I2C_EEPROM, SPI_EEPROM)
+  #define USE_SHARED_EEPROM 1
 #endif

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,6 +21,16 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#include <SDIO.hpp>
+#include <DMA.hpp>
+
+#define SDIO_D0_PIN   PC8
+#define SDIO_D1_PIN   PC9
+#define SDIO_D2_PIN   PC10
+#define SDIO_D3_PIN   PC11
+#define SDIO_CK_PIN   PC12
+#define SDIO_CMD_PIN  PD2
+
+void sdio_mfl_init();
+auto SDIO_SetBusWidth(sdio::Bus_Width width) -> bool;
+void DMA1_IRQHandler(dma::DMA_Channel channel);

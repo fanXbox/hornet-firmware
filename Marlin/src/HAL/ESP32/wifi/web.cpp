@@ -19,8 +19,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
+#ifdef ARDUINO_ARCH_ESP32
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#include "../../../inc/MarlinConfigPre.h"
+
+#if ALL(WIFISUPPORT, WEBSUPPORT)
+
+#include "../../../inc/MarlinConfig.h"
+
+#undef DISABLED  // esp32-hal-gpio.h
+#include <SPIFFS.h>
+#include "wifi.h"
+
+AsyncEventSource events("/events"); // event source (Server-Sent events)
+
+void onNotFound(AsyncWebServerRequest *request) {
+  request->send(404);
+}
+
+void web_init() {
+  server.addHandler(&events);       // attach AsyncEventSource
+  server.serveStatic("/", SPIFFS, "/www").setDefaultFile("index.html");
+  server.onNotFound(onNotFound);
+}
+
+#endif // WIFISUPPORT && WEBSUPPORT
+#endif // ARDUINO_ARCH_ESP32

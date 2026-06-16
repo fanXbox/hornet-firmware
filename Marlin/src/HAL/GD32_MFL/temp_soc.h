@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,6 +21,9 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#define TS_TYPICAL_V      1.405
+#define TS_TYPICAL_TEMP   25
+#define TS_TYPICAL_SLOPE  4.5
+
+// TODO: Implement voltage scaling (calibrated Vrefint) and ADC resolution scaling (when applicable)
+#define TEMP_SOC_SENSOR(RAW) ((TS_TYPICAL_V - (RAW) / float(OVERSAMPLENR) / float(HAL_ADC_RANGE) * (float(ADC_VREF_MV) / 1000.0f)) / ((TS_TYPICAL_SLOPE) / 1000.0f) + TS_TYPICAL_TEMP)

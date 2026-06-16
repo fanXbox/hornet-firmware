@@ -21,6 +21,6 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+extern bool spiffs_initialized;
+
+void spiffs_init();

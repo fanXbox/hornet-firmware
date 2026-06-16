@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -17,10 +17,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
+// Define SPI Pins: SCK, MISO, MOSI
+#ifndef SD_SCK_PIN
+  #define SD_SCK_PIN  PIN_SPI_SCK
+#endif
+#ifndef SD_MISO_PIN
+  #define SD_MISO_PIN PIN_SPI_MISO
+#endif
+#ifndef SD_MOSI_PIN
+  #define SD_MOSI_PIN PIN_SPI_MOSI
 #endif

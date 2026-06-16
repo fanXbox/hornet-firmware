@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,6 +21,36 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#include <Servo.h>
+
+#include "../../core/millis_t.h"
+
+// Inherit and expand on the official library
+class libServo {
+public:
+  libServo();
+
+  int8_t attach(const int pin = 0); // pin == 0 uses value from previous call
+  int8_t attach(const int pin, const int min, const int max);
+  void detach() { mflServo.detach(); }
+
+  int read() { return mflServo.read(); }
+  void move(const int value);
+
+  void pause();
+  void resume();
+
+  static void pause_all_servos();
+  static void resume_all_servos();
+
+  static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority);
+
+private:
+  Servo mflServo;
+
+  int servoPin = 0;
+  millis_t delay = 0;
+
+  bool was_attached_before_pause;
+  int value_before_pause;
+};

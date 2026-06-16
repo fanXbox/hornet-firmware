@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,27 +21,13 @@
  */
 #pragma once
 
-/**
- * Endstop Interrupts
- *
- * Without endstop interrupts the endstop pins must be polled continually in
- * the stepper-ISR via endstops.update(), most of the time finding no change.
- * With this feature endstops.update() is called only when we know that at
- * least one endstop has changed state, saving valuable CPU cycles.
- *
- * This feature only works when all used endstop pins can generate an 'external interrupt'.
- *
- * Test whether pins issue interrupts on your board by flashing 'pin_interrupt_test.ino'.
- * (Located in Marlin/buildroot/share/pin_interrupt_test/pin_interrupt_test.ino)
- */
-
 #include "../../module/endstops.h"
 
 // One ISR for all EXT-Interrupts
-void ICACHE_RAM_ATTR endstop_ISR() { endstops.update(); }
+void endstop_ISR() { endstops.update(); }
 
 void setup_endstop_interrupts() {
-  #define _ATTACH(P) attachInterrupt(digitalPinToInterrupt(P), endstop_ISR, CHANGE)
+  #define _ATTACH(P) attachInterrupt(P, endstop_ISR, CHANGE)
   TERN_(USE_X_MAX,       _ATTACH(X_MAX_PIN));
   TERN_(USE_X_MIN,       _ATTACH(X_MIN_PIN));
   TERN_(USE_Y_MAX,       _ATTACH(Y_MAX_PIN));

@@ -21,6 +21,10 @@
  */
 #pragma once
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#include <ESPAsyncWebServer.h>
+
+extern AsyncWebServer server;
+
+#define DEFAULT_WIFI_HOSTNAME "marlin"
+
+void wifi_init();

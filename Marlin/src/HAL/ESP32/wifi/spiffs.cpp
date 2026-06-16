@@ -19,8 +19,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
+#ifdef ARDUINO_ARCH_ESP32
 
-#if ANY(MKS_MINI_12864, FYSETC_MINI_12864_2_1)
-  #define U8G_HW_SPI_ESP32 1
-#endif
+#include "../../../inc/MarlinConfigPre.h"
+
+#if ALL(WIFISUPPORT, WEBSUPPORT)
+
+#include "../../../core/serial.h"
+
+#include <FS.h>
+#include <SPIFFS.h>
+
+bool spiffs_initialized;
+
+void spiffs_init() {
+  if (SPIFFS.begin(true))  // formatOnFail = true
+    spiffs_initialized = true;
+  else
+    SERIAL_ERROR_MSG("SPIFFS mount failed");
+}
+
+#endif // WIFISUPPORT && WEBSUPPORT
+#endif // ARDUINO_ARCH_ESP32
