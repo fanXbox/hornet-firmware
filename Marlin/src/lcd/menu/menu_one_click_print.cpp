@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2023 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,27 +22,30 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_GAME_MENU
+#if ENABLED(ONE_CLICK_PRINT)
 
-#include "menu_item.h"
-#include "game/game.h"
+#include "menu.h"
+#include "../../gcode/queue.h"
 
-void menu_game() {
-  START_MENU();
-  BACK_ITEM(TERN(LCD_INFO_MENU, MSG_INFO_MENU, MSG_MAIN_MENU));
-  #if ENABLED(MARLIN_BRICKOUT)
-    SUBMENU(MSG_BRICKOUT, brickout.enter_game);
-  #endif
-  #if ENABLED(MARLIN_INVADERS)
-    SUBMENU(MSG_INVADERS, invaders.enter_game);
-  #endif
-  #if ENABLED(MARLIN_SNAKE)
-    SUBMENU(MSG_SNAKE, snake.enter_game);
-  #endif
-  #if ENABLED(MARLIN_MAZE)
-    SUBMENU(MSG_MAZE, maze.enter_game);
-  #endif
-  END_MENU();
+static void one_click_print_done() {
+  ui.return_to_status();
+  ui.reset_status();
+  queue.enqueue_one_now(F("M1003"));  // Make sure SD card browsing doesn't break!
 }
 
-#endif // HAS_GAME_MENU
+void one_click_print() {
+  ui.goto_screen([]{
+    char * const filename = card.longest_filename();
+    MenuItem_confirm::select_screen(
+      GET_TEXT_F(MSG_BUTTON_PRINT), GET_TEXT_F(MSG_BUTTON_CANCEL),
+      []{
+        card.openAndPrintFile(card.filename);
+        one_click_print_done();
+      },
+      one_click_print_done,
+      GET_TEXT_F(MSG_START_PRINT), filename, F("?")
+    );
+  });
+}
+
+#endif // ONE_CLICK_PRINT

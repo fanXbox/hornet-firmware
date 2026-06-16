@@ -21,42 +21,39 @@
  */
 
 //
-// Power Monitor Menu
+// Language Selection Menu
 //
 
-#include "../../inc/MarlinConfigPre.h"
+#include "../../inc/MarlinConfig.h"
 
-#if HAS_MARLINUI_MENU && HAS_POWER_MONITOR
+#if HAS_MENU_MULTI_LANGUAGE
 
 #include "menu_item.h"
-#include "../../feature/power_monitor.h"
+#include "../../MarlinCore.h"
+#include "../../module/settings.h"
 
-void menu_power_monitor() {
+static void set_lcd_language(const uint8_t inlang) {
+  ui.set_language(inlang);
+  TERN_(LCD_LANGUAGE_AUTO_SAVE, (void)settings.save());
+}
+
+void menu_language() {
   START_MENU();
   BACK_ITEM(MSG_MAIN_MENU);
 
-  #if ENABLED(POWER_MONITOR_CURRENT)
-  {
-    bool ena = power_monitor.current_display_enabled();
-    EDIT_ITEM(bool, MSG_CURRENT, &ena, power_monitor.toggle_current_display);
-  }
-  #endif
-
-  #if ENABLED(POWER_MONITOR_VOLTAGE)
-  {
-    bool ena = power_monitor.voltage_display_enabled();
-    EDIT_ITEM(bool, MSG_VOLTAGE, &ena, power_monitor.toggle_voltage_display);
-  }
-  #endif
-
-  #if HAS_POWER_MONITOR_WATTS
-  {
-    bool ena = power_monitor.power_display_enabled();
-    EDIT_ITEM(bool, MSG_POWER, &ena, power_monitor.toggle_power_display);
-  }
+  MENU_ITEM_F(function, FPSTR(GET_LANGUAGE_NAME(1)), []{ set_lcd_language(0); });
+  MENU_ITEM_F(function, FPSTR(GET_LANGUAGE_NAME(2)), []{ set_lcd_language(1); });
+  #if NUM_LANGUAGES > 2
+    MENU_ITEM_F(function, FPSTR(GET_LANGUAGE_NAME(3)), []{ set_lcd_language(2); });
+    #if NUM_LANGUAGES > 3
+      MENU_ITEM_F(function, FPSTR(GET_LANGUAGE_NAME(4)), []{ set_lcd_language(3); });
+      #if NUM_LANGUAGES > 4
+        MENU_ITEM_F(function, FPSTR(GET_LANGUAGE_NAME(5)), []{ set_lcd_language(4); });
+      #endif
+    #endif
   #endif
 
   END_MENU();
 }
 
-#endif // HAS_MARLINUI_MENU && HAS_POWER_MONITOR
+#endif // HAS_MENU_MULTI_LANGUAGE

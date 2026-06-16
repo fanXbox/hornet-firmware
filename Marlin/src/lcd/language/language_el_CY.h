@@ -21,49 +21,18 @@
  */
 #pragma once
 
-#include "../../../inc/MarlinConfigPre.h"
-#include "../../marlinui.h"
-#include "types.h"
+/**
+ * Greek (Cyprus)
+ *
+ * LCD Menu Messages
+ * See also https://marlinfw.org/docs/development/lcd_language.html
+ */
 
-//#define MUTE_GAMES
+#include "language_el.h"
 
-#if ENABLED(MUTE_GAMES) || !HAS_SOUND
-  #define _BUZZ(D,F) NOOP
-#else
-  #define _BUZZ(D,F) BUZZ(D,F)
-#endif
+namespace Language_el_CY {
+  using namespace Language_el; // Inherit undefined strings from Greek (or English)
 
-#if HAS_GAME_MENU
-  void menu_game();
-#endif
-
-#if ENABLED(MARLIN_BRICKOUT)
-  #include "brickout.h"
-#endif
-#if ENABLED(MARLIN_INVADERS)
-  #include "invaders.h"
-#endif
-#if ENABLED(MARLIN_MAZE)
-  #include "maze.h"
-#endif
-#if ENABLED(MARLIN_SNAKE)
-  #include "snake.h"
-#endif
-
-// Pool game data to save SRAM
-union MarlinGameData {
-  #if ENABLED(MARLIN_BRICKOUT)
-    brickout_data_t brickout;
-  #endif
-  #if ENABLED(MARLIN_INVADERS)
-    invaders_data_t invaders;
-  #endif
-  #if ENABLED(MARLIN_SNAKE)
-    snake_data_t snake;
-  #endif
-  #if ENABLED(MARLIN_MAZE)
-    maze_data_t maze;
-  #endif
-};
-
-extern MarlinGameData marlin_game_data;
+  constexpr uint8_t CHARSIZE              = 2;
+  LSTR LANGUAGE                           = _UxGT("Greek (Cyprus)");
+}
