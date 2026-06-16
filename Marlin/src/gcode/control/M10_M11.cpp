@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,37 +20,30 @@
  *
  */
 
+/**
+ * gcode/control/M10_M11.cpp
+ * Air Evacuation
+ */
+
 #include "../../inc/MarlinConfig.h"
 
-#if ANY(EXT_SOLENOID, MANUAL_SOLENOID_CONTROL)
+#if ENABLED(AIR_EVACUATION)
 
 #include "../gcode.h"
-#include "../../feature/solenoid.h"
-#include "../../module/motion.h"
+#include "../../feature/spindle_laser.h"
 
 /**
- * M380: Enable solenoid on the active extruder
- *
- *   S<index> to specify a solenoid (Requires MANUAL_SOLENOID_CONTROL)
+ * M10: Vacuum or Blower On
  */
-void GcodeSuite::M380() {
-  #if ENABLED(MANUAL_SOLENOID_CONTROL)
-    enable_solenoid(parser.intval('S', active_extruder));
-  #else
-    enable_solenoid(active_extruder);
-  #endif
+void GcodeSuite::M10() {
+  cutter.air_evac_enable();   // Turn on Vacuum or Blower motor
 }
 
 /**
- * M381: Disable all solenoids if EXT_SOLENOID
- *       Disable selected/active solenoid if MANUAL_SOLENOID_CONTROL
+ * M11: Vacuum or Blower OFF
  */
-void GcodeSuite::M381() {
-  #if ENABLED(MANUAL_SOLENOID_CONTROL)
-    disable_solenoid(parser.intval('S', active_extruder));
-  #else
-    disable_all_solenoids();
-  #endif
+void GcodeSuite::M11() {
+  cutter.air_evac_disable();  // Turn off Vacuum or Blower motor
 }
 
-#endif // EXT_SOLENOID || MANUAL_SOLENOID_CONTROL
+#endif // AIR_EVACUATION
