@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2023 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,31 +19,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
- * polargraph.cpp
+ * polar.h - POLAR-specific functions
  */
 
-#include "../inc/MarlinConfig.h"
+#include "../core/types.h"
 
-#if ENABLED(POLARGRAPH)
+extern float segments_per_second;
 
-#include "polargraph.h"
-#include "motion.h"
+float absoluteAngle(float a);
+void forward_kinematics(const_float_t r, const_float_t theta);
 
-// For homing:
-#include "planner.h"
-#include "endstops.h"
-#include "../lcd/marlinui.h"
-#include "../MarlinCore.h"
-
-// Initialized by settings.load
-float segments_per_second, polargraph_max_belt_len;
-xy_pos_t draw_area_min, draw_area_max;
-
-void inverse_kinematics(const xyz_pos_t &raw) {
-  const float x1 = raw.x - draw_area_min.x, x2 = draw_area_max.x - raw.x, y = raw.y - draw_area_max.y;
-  delta.set(HYPOT(x1, y), HYPOT(x2, y) OPTARG(HAS_Z_AXIS, raw.z));
-}
-
-#endif // POLARGRAPH
+void inverse_kinematics(const xyz_pos_t &raw);
+void polar_report_positions();
