@@ -120,15 +120,15 @@
 #define HEATER_3_PIN                           9
 #define HEATER_BED_PIN                         2
 
-#ifndef FAN_PIN
-  #define FAN_PIN                              6
+#ifndef FAN0_PIN
+  #define FAN0_PIN                             6
 #endif
 #define FAN2_PIN                               5
 
 //
 // Misc. Functions
 //
-#define SDSS                                  59
+#define SD_SS_PIN                             59
 #define SD_DETECT_PIN                         60
 #define LED_PIN                               13
 #define PS_ON_PIN                             32
@@ -166,7 +166,7 @@
 #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
   #define LCD_PINS_RS                         A8  // CS chip select / SS chip slave select
-  #define LCD_PINS_ENABLE                   MOSI  // SID (MOSI)
+  #define LCD_PINS_EN                       MOSI  // SID (MOSI)
   #define LCD_PINS_D4                        SCK  // SCK (CLK) clock
 
   #define BTN_EN1                             20

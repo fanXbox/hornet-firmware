@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -21,20 +21,6 @@
  */
 #pragma once
 
-/**
- * MKS BASE 1.0 – Arduino Mega2560 with RAMPS v1.4 pin assignments
- * Schematics:
- * Schematic: https://reprap.org/wiki/File:MKS_Base_V1.0_source.zip
- * ATmega2560
- *
- * Rev B - Override pin definitions for CASE_LIGHT and M3/M4/M5 spindle control
- */
-
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "MKS BASE 1.0 supports up to 2 hotends / E steppers."
+#if NOT_TARGET(__PLAT_RP2040__)
+  #error "Oops! Make sure to build with target platform 'RP2040'."
 #endif
-
-#define BOARD_INFO_NAME "MKS BASE 1.0"
-#define MKS_BASE_VERSION 10
-
-#include "pins_MKS_BASE_common.h" // ... RAMPS

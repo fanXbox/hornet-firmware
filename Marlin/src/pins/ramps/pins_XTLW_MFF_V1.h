@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,19 +22,43 @@
 #pragma once
 
 /**
- * KFB 2.0 – Arduino Mega2560 with RAMPS v1.4 pin assignments
- * ATmega2560
+ * XTLW MFF V1.0 pin assignments
  */
 
-#if HOTENDS > 2 || E_STEPPERS > 2
-  #error "KFB 2.0 supports up to 2 hotends / E steppers."
+#include "env_validate.h"
+
+#ifndef BOARD_INFO_NAME
+  #define BOARD_INFO_NAME "XTLW MFF V1.0"
 #endif
 
-#define BOARD_INFO_NAME "KFB 2.0"
+//
+// Steppers
+//
+#ifndef E2_STEP_PIN
+  #define E2_STEP_PIN                         42
+#endif
+#ifndef E2_DIR_PIN
+  #define E2_DIR_PIN                          40
+#endif
+#ifndef E2_ENABLE_PIN
+  #define E2_ENABLE_PIN                       44
+#endif
 
 //
 // Heaters / Fans
 //
+
+#define FET_ORDER_EFB
+//#define HEATER_0_PIN                        10
 #define MOSFET_D_PIN                           7
+//#define HEATER_BED_PIN                       8
+
+// Filament sensor
+#if Y_MIN_PIN != 14 && !PIN_EXISTS(FIL_RUNOUT)
+  #define FIL_RUNOUT_PIN                      14  // Use Y_MIN limit switch interface
+#endif
+#if Z_MAX_PIN != 19 && !PIN_EXISTS(FIL_RUNOUT2)
+  #define FIL_RUNOUT2_PIN                     19  // Use Z_MAX limit switch interface
+#endif
 
 #include "pins_RAMPS.h"

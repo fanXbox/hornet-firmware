@@ -49,21 +49,22 @@
 // Heaters / Fans
 //
 #define HEATER_BED_PIN                        -1
-#define FAN_PIN                                8
+#define FAN0_PIN                               8
 
 //
 // Misc. Functions
 //
-#define SDSS                                  25
+#define SD_SS_PIN                             25
 #define CASE_LIGHT_PIN                         7
 
 //
 // LCD / Controller
 //
+
 #if HAS_WIRED_LCD && IS_NEWPANEL
 
   #define LCD_PINS_RS                         27
-  #define LCD_PINS_ENABLE                     29
+  #define LCD_PINS_EN                         29
   #define LCD_PINS_D4                         37
   #define LCD_PINS_D5                         35
   #define LCD_PINS_D6                         33
