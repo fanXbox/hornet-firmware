@@ -45,7 +45,7 @@
 // Public functions
 // --------------------------------------------------------------------------
 
-#if EITHER(SOFTWARE_SPI, FORCE_SOFT_SPI)
+#if ANY(SOFTWARE_SPI, FORCE_SOFT_SPI)
 
   // ------------------------
   // Software SPI
@@ -108,7 +108,6 @@
     SPI.beginTransaction(spiConfig);
     SPI.transfer(buf, nbyte);
     SPI.endTransaction();
-
   }
 
   /**
