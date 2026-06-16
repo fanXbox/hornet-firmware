@@ -19,8 +19,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#pragma once
 
-#include <SPI.h>
+#ifdef __PLAT_NATIVE_SIM__
 
-using MarlinSPI = SPIClass;
+#include "../../inc/MarlinConfig.h"
+#include "pinsDebug.h"
+
+int8_t ADC_pin_mode(const pin_t) { return -1; }
+
+int8_t get_pin_mode(const pin_t pin) { return isValidPin(pin) ? 0 : -1; }
+
+bool getValidPinMode(const pin_t pin) {
+  const int8_t pin_mode = get_pin_mode(pin);
+  if (pin_mode == -1 || pin_mode == ADC_pin_mode(pin)) // Invalid pin or active analog pin
+    return false;
+
+  return (Gpio::getMode(pin) != 0); // Input/output state
+}
+
+// The pin and index are the same on this platform
+bool getPinIsDigitalByIndex(const pin_t pin) {
+  return !isAnalogPin(pin) || get_pin_mode(pin) != ADC_pin_mode(pin);
+}
+
+void printPinPort(const pin_t) {}
+void printPinPWM(const pin_t) {}
+bool pwm_status(const pin_t) { return false; }
+
+#endif
