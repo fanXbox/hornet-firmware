@@ -20,40 +20,14 @@
  *
  */
 
-#include "../../inc/MarlinConfig.h"
-
-#if HAS_SOUND
-
 #include "../gcode.h"
-
-#include "../../lcd/marlinui.h" // i2c-based BUZZ
-#include "../../libs/buzzer.h"  // Buzzer, if possible
+#include "../../module/planner.h"
 
 /**
- * M300: Play a Tone / Add a tone to the queue
- *
- *  S<frequency> - (Hz) The frequency of the tone. 0 for silence.
- *  P<duration>  - (ms) The duration of the tone.
- *
- * With SOUND_MENU_ITEM:
- *  E<0|1>       - Mute or enable sound
+ * M400: Finish all moves
  */
-void GcodeSuite::M300() {
+void GcodeSuite::M400() {
 
-  #if ENABLED(SOUND_MENU_ITEM)
-    if (parser.seen('E')) {
-      ui.sound_on = parser.value_bool();
-      return;
-    }
-  #endif
+  planner.synchronize();
 
-  const uint16_t frequency = parser.ushortval('S', 260);
-  uint16_t duration = parser.ushortval('P', 1000);
-
-  // Limits the tone duration to 0-5 seconds.
-  NOMORE(duration, 5000U);
-
-  BUZZ(duration, frequency);
 }
-
-#endif // HAS_SOUND

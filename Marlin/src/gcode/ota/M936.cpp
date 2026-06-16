@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2023 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,41 +19,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_SOUND
+#if ENABLED(OTA_FIRMWARE_UPDATE)
 
 #include "../gcode.h"
+#include "../../libs/BL24CXX.h"
 
-#include "../../lcd/marlinui.h" // i2c-based BUZZ
-#include "../../libs/buzzer.h"  // Buzzer, if possible
+#define OTA_FLAG_EEPROM 90
+
+//#define DEBUG_OUT 1
+#include "../../core/debug_out.h"
 
 /**
- * M300: Play a Tone / Add a tone to the queue
- *
- *  S<frequency> - (Hz) The frequency of the tone. 0 for silence.
- *  P<duration>  - (ms) The duration of the tone.
- *
- * With SOUND_MENU_ITEM:
- *  E<0|1>       - Mute or enable sound
+ * M936: Set one of the OTA update flags.
+ *   V2 = Upgrade the motherboard firmware
  */
-void GcodeSuite::M300() {
+void GcodeSuite::M936() {
+  static uint8_t ota_update_flag = 0x00;
+  const int16_t ota = parser.intval('V', -1);
+  switch (ota) {
+    case 2:
+      // Set the OTA board firmware upgrade flag ahead of reboot.
+      ota_update_flag = 0x01;
+      DEBUG_ECHOLNPGM("Motherboard upgrade flag set");
+      break;
+  }
 
-  #if ENABLED(SOUND_MENU_ITEM)
-    if (parser.seen('E')) {
-      ui.sound_on = parser.value_bool();
-      return;
-    }
-  #endif
-
-  const uint16_t frequency = parser.ushortval('S', 260);
-  uint16_t duration = parser.ushortval('P', 1000);
-
-  // Limits the tone duration to 0-5 seconds.
-  NOMORE(duration, 5000U);
-
-  BUZZ(duration, frequency);
+  switch (ota) {
+    case 2:
+      BL24CXX::write(OTA_FLAG_EEPROM, &ota_update_flag, sizeof(ota_update_flag));
+      safe_delay(100);
+      hal.reboot();
+  }
 }
 
-#endif // HAS_SOUND
+#endif // OTA_FIRMWARE_UPDATE
