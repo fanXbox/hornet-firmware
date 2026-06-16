@@ -23,8 +23,10 @@
 
 #include "env_validate.h"
 
+//#define BOARD_CUSTOM_BUILD_FLAGS -DTONE_CHANNEL=4 -DTONE_TIMER=4 -DTIMER_TONE=4
+
 #ifndef BOARD_INFO_NAME
-  #define BOARD_INFO_NAME "BTT Manta M5P V1.0"
+  #define BOARD_INFO_NAME "BTT Manta M4P V2.1"
 #endif
 
 #define USES_DIAG_JUMPERS
@@ -48,7 +50,7 @@
 //
 // Servos
 //
-#define SERVO0_PIN                          PC15  // PROBE
+#define SERVO0_PIN                          PA1   // SERVOS
 
 //
 // Probe enable
@@ -58,93 +60,73 @@
 #endif
 
 //
-// Trinamic StallGuard pins
-//
-#define X_DIAG_PIN                          PD3   // MIN1
-#define Y_DIAG_PIN                          PD2   // MIN2
-#define Z_DIAG_PIN                          PC3   // MIN3
-#define E0_DIAG_PIN                         PC2   // MIN4
-#define E1_DIAG_PIN                         -1
-
-//
 // Limit Switches
 //
-#define X_STOP_PIN                    X_DIAG_PIN  // MIN1
-#define Y_STOP_PIN                    Y_DIAG_PIN  // MIN1
-#define Z_STOP_PIN                    Z_DIAG_PIN  // MIN3
+#define X_STOP_PIN                          PC0   // X-STOP
+#define Y_STOP_PIN                          PC1   // Y-STOP
+#define Z_STOP_PIN                          PC2   // Z-STOP
 
 //
-// Z Probe (when not Z_STOP_PIN)
+// Z Probe must be this pin
 //
-#ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN                   PC13  // PROBE
-  //#define Z_MIN_PROBE_PIN                 PC15  // IND-DET (with adjustable pullup set via jumper)
-#endif
+#define Z_MIN_PROBE_PIN                     PC14  // PROBE
 
 //
 // Filament Runout Sensor
 //
 #ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN             E0_DIAG_PIN  // MIN4
+  #define FIL_RUNOUT_PIN                    PC15  // E0-STOP
 #endif
 
 //
 // Steppers
 //
-#define X_STEP_PIN                          PC8
-#define X_DIR_PIN                           PC9
-#define X_ENABLE_PIN                        PA15
+#define X_STEP_PIN                          PC6
+#define X_DIR_PIN                           PA14
+#define X_ENABLE_PIN                        PC7
 #ifndef X_CS_PIN
-  #define X_CS_PIN                          PD9
+  #define X_CS_PIN                          PB12
 #endif
 
-#define Y_STEP_PIN                          PA10
-#define Y_DIR_PIN                           PA14
-#define Y_ENABLE_PIN                        PA13
+#define Y_STEP_PIN                          PB10
+#define Y_DIR_PIN                           PB2
+#define Y_ENABLE_PIN                        PB11
 #ifndef Y_CS_PIN
-  #define Y_CS_PIN                          PD8
+  #define Y_CS_PIN                          PC10
 #endif
 
-#define Z_STEP_PIN                          PC6
-#define Z_DIR_PIN                           PC7
-#define Z_ENABLE_PIN                        PA9
+#define Z_STEP_PIN                          PB0
+#define Z_DIR_PIN                           PC5
+#define Z_ENABLE_PIN                        PB1
 #ifndef Z_CS_PIN
-  #define Z_CS_PIN                          PB10
+  #define Z_CS_PIN                          PC9
 #endif
 
-#define E0_STEP_PIN                         PB12
-#define E0_DIR_PIN                          PB11
-#define E0_ENABLE_PIN                       PA8
+#define E0_STEP_PIN                         PB3
+#define E0_DIR_PIN                          PB4
+#define E0_ENABLE_PIN                       PD5
 #ifndef E0_CS_PIN
-  #define E0_CS_PIN                         PB2
-#endif
-
-#define E1_STEP_PIN                         PB0
-#define E1_DIR_PIN                          PB1
-#define E1_ENABLE_PIN                       PC4
-#ifndef E1_CS_PIN
-  #define E1_CS_PIN                         PA6
+  #define E0_CS_PIN                         PA13
 #endif
 
 //
 // Default pins for TMC software SPI
 //
 #ifndef TMC_SPI_MOSI
-  #define TMC_SPI_MOSI                      PB15  // Shared with SPI header, Pin 5 (SPI2)
+  #define TMC_SPI_MOSI                      PB15
 #endif
 #ifndef TMC_SPI_MISO
-  #define TMC_SPI_MISO                      PB14  // Shared with SPI header, Pin 6 (SPI2)
+  #define TMC_SPI_MISO                      PB14
 #endif
 #ifndef TMC_SPI_SCK
-  #define TMC_SPI_SCK                       PB13  // Shared with SPI header, Pin 4 (SPI2)
+  #define TMC_SPI_SCK                       PB13
 #endif
 
 #if HAS_TMC_UART
-  #define X_SERIAL_TX_PIN                   PD9   // X_CS_PIN
-  #define Y_SERIAL_TX_PIN                   PD8   // Y_CS_PIN
-  #define Z_SERIAL_TX_PIN                   PB10  // Z_CS_PIN
-  #define E0_SERIAL_TX_PIN                  PB2   // E0_CS_PIN
-  #define E1_SERIAL_TX_PIN                  PA6   // E1_CS_PIN
+  #define X_SERIAL_TX_PIN                   PB12
+  #define Y_SERIAL_TX_PIN                   PC10
+  #define Z_SERIAL_TX_PIN                   PC9
+  #define E0_SERIAL_TX_PIN                  PA13
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE
@@ -156,53 +138,45 @@
 //
 // Temperature Sensors
 //
-#define TEMP_0_PIN                          PA1   // Analog Input "TH0"
-#define TEMP_1_PIN                          PA2   // Analog Input "TH1"
-#define TEMP_BED_PIN                        PA0   // Analog Input "TB"
+#define TEMP_0_PIN                          PA0   // Analog Input "TH0"
+#define TEMP_BED_PIN                        PC4   // Analog Input "TB0"
 
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN                        PC5   // "HE0"
-#define HEATER_1_PIN                        PA7   // "HE1"
-#define HEATER_BED_PIN                      PA5   // "HB"
+#define HEATER_0_PIN                        PC8   // "HE"
+#define HEATER_BED_PIN                      PD8   // "HB"
 
-#define FAN0_PIN                            PA4   // "FAN0"
-#define FAN1_PIN                            PA3   // "FAN1"
-
-//
-// Auto fans
-//
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN               FAN1_PIN
-#endif
+#define FAN0_PIN                            PD2   // "FAN0"
+#define FAN1_PIN                            PD3   // "FAN1"
+#define FAN2_PIN                            PD4   // "FAN2"
 
 /**
- *                ------                                   ------
- *  (BEEPER) PD5 | 1  2 | PD4 (BTN_ENC)       (MISO) PB14 | 1  2 | PB13 (SCK)
- *  (LCD_EN) PB3 | 3  4 | PD6 (LCD_RS)     (BTN_EN1)  PB8 | 3  4 | PB9  (SD_SS)
- *  (LCD_D4) PB5 | 5  6   PB4 (LCD_D5)     (BTN_EN2) PC10 | 5  6   PB15 (MOSI)
- *  (LCD_D6) PB7 | 7  8 | PB6 (LCD_D7)   (SD_DETECT) PC12 | 7  8 | PF2
- *           GND | 9 10 | 5V                          GND | 9 10 | --
- *                ------                                   ------
- *                 EXP1                                     EXP2
+ *                ------                                    ------
+ * (BEEPER) PD6  | 1  2 | PB8  (BTN_ENC)  (MISO)      PB14 | 1  2 | PB13 (SCK)
+ * (LCD_EN) PB9  | 3  4 | PC3  (LCD_RS)   (BTN_EN1)   PC11 | 3  4 | PA8  (SD_SS)
+ * (LCD_D4) PA15 | 5  6   PA10 (LCD_D5)   (BTN_EN2)   PC12 | 5  6   PB15 (MOSI)
+ * (LCD_D6)  PA9 | 7  8 | PB5  (LCD_D7)   (SD_DETECT) PC13 | 7  8 | RESET
+ *           GND | 9 10 | 5V                           GND | 9 10 | --
+ *                ------                                    ------
+ *                 EXP1                                      EXP2
  */
-#define EXP1_01_PIN                         PD5
-#define EXP1_02_PIN                         PD4
-#define EXP1_03_PIN                         PB3
-#define EXP1_04_PIN                         PD6
-#define EXP1_05_PIN                         PB5
-#define EXP1_06_PIN                         PB4
-#define EXP1_07_PIN                         PB7
-#define EXP1_08_PIN                         PB6
+#define EXP1_01_PIN                         PD6
+#define EXP1_02_PIN                         PB8
+#define EXP1_03_PIN                         PB9
+#define EXP1_04_PIN                         PC3
+#define EXP1_05_PIN                         PA15
+#define EXP1_06_PIN                         PA10
+#define EXP1_07_PIN                         PA9
+#define EXP1_08_PIN                         PB5
 
 #define EXP2_01_PIN                         PB14
 #define EXP2_02_PIN                         PB13
-#define EXP2_03_PIN                         PB8
-#define EXP2_04_PIN                         PB9
-#define EXP2_05_PIN                         PC10
+#define EXP2_03_PIN                         PC11
+#define EXP2_04_PIN                         PA8
+#define EXP2_05_PIN                         PC12
 #define EXP2_06_PIN                         PB15
-#define EXP2_07_PIN                         PC12
+#define EXP2_07_PIN                         PC13
 #define EXP2_08_PIN                         -1
 
 //
@@ -216,10 +190,10 @@
   #define SD_MOSI_PIN                EXP2_06_PIN
   #define SD_DETECT_PIN              EXP2_07_PIN
 #elif SD_CONNECTION_IS(ONBOARD)
-  #define SD_SCK_PIN                        PB13
-  #define SD_MISO_PIN                       PB14
-  #define SD_MOSI_PIN                       PB15
-  #define ONBOARD_SD_CS_PIN                 PC1   // Chip select for "System" SD card
+  #define SD_SCK_PIN                        PA5
+  #define SD_MISO_PIN                       PA6
+  #define SD_MOSI_PIN                       PA7
+  #define ONBOARD_SD_CS_PIN                 PA4   // Chip select for "System" SD card
   #define SD_SS_PIN            ONBOARD_SD_CS_PIN
 #elif SD_CONNECTION_IS(CUSTOM_CABLE)
   #error "No custom SD drive cable defined for this board."
@@ -317,9 +291,9 @@
 // NeoPixel LED
 //
 #ifndef BOARD_NEOPIXEL_PIN
-  #define BOARD_NEOPIXEL_PIN                PC11  // RGB1
+  #define BOARD_NEOPIXEL_PIN                PD0
 #endif
 
 #ifndef NEOPIXEL2_PIN
-  #define NEOPIXEL2_PIN                     PC14  // RGB2
+  #define NEOPIXEL2_PIN                     PD1
 #endif

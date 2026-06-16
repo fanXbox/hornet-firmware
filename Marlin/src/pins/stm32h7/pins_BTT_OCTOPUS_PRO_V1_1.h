@@ -19,11 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#ifndef ENV_VALIDATE_H
-#define ENV_VALIDATE_H
+#pragma once
 
-#if NOT_TARGET(STM32G0xx) || NOT_TARGET(STM32G0B1xx)
-  #error "Oops! Select an STM32G0 board in 'Tools > Board.'"
-#endif
+#define BOARD_INFO_NAME   "BTT OCTOPUS PRO V1.1"
 
+#include "pins_BTT_OCTOPUS_PRO_V1_common.h"
+
+//
+// Steppers
+//
+#define Z2_ENABLE_PIN                       PA2
+
+//
+// Heaters / Fans
+//
+#define HEATER_0_PIN                        PA0   // Heater0
+#define HEATER_2_PIN                        PB0   // Heater2
+
+//
+// NeoPixel LED
+//
+#ifndef NEOPIXEL_PIN
+  #define NEOPIXEL_PIN                      PB10
 #endif

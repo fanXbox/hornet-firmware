@@ -30,9 +30,10 @@
 
 #if HAS_MULTI_HOTEND || E_STEPPERS > 1
   #error "Creality v24S1 only supports 1 hotend / E stepper."
+  #define E_ERROR 1
 #endif
 
-#if BOTH(BLTOUCH, Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)
+#if ALL(BLTOUCH, Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)
   #error "Disable Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN when using BLTOUCH with Creality V24S1-301."
 #endif
 
@@ -42,6 +43,8 @@
 #ifndef DEFAULT_MACHINE_NAME
   #define DEFAULT_MACHINE_NAME "Ender-3 S1"
 #endif
+
+#define BOARD_LCD_SERIAL_PORT 2
 
 //
 // Servos
@@ -57,6 +60,13 @@
 
 #ifndef Z_MIN_PROBE_PIN
   #define Z_MIN_PROBE_PIN                   PC14  // BLTouch IN
+#endif
+
+//
+// Probe enable
+//
+#if ENABLED(PROBE_ENABLE_DISABLE) && !defined(PROBE_ENABLE_PIN)
+  #define PROBE_ENABLE_PIN            SERVO0_PIN
 #endif
 
 //
@@ -84,11 +94,11 @@
 #if HAS_CUTTER
   //#define HEATER_0_PIN                    -1
   //#define HEATER_BED_PIN                  -1
-  #define FAN_PIN                           -1
-  #define SPINDLE_LASER_ENA_PIN             PC0   // FET 1
+  #define FAN0_PIN                          -1
   #define SPINDLE_LASER_PWM_PIN             PC0   // Bed FET
+  #define SPINDLE_LASER_ENA_PIN             PC0   // FET 1
   #define SPINDLE_DIR_PIN                   PC0   // FET 4
-  #define LASER_SOFT_PWM_PIN                PC0
+  //#define LASER_SOFT_PWM_PIN              PC0
 #endif
 
 #include "pins_CREALITY_V4.h"
