@@ -87,7 +87,7 @@
 //
 // Fans
 //
-#define FAN_PIN                                8
+#define FAN0_PIN                               8
 
 //
 // Auto fans
@@ -112,7 +112,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define SD_DETECT_PIN                         40
 
 // Common I/O

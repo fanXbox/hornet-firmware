@@ -79,12 +79,12 @@
 #define HEATER_2_PIN                          11  // 13
 #define HEATER_BED_PIN                        10  // 14/15
 
-#define FAN_PIN                                7
+#define FAN0_PIN                               7
 
 //
 // Misc. Functions
 //
-#define SDSS                                  11
+#define SD_SS_PIN                             11
 #define LED_PIN                               13
 #define SOL1_PIN                              16
 #define SOL2_PIN                              17
