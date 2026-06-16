@@ -1,10 +1,11 @@
-/******************************
- * filament_runout_screen.cpp *
- ******************************/
+/************************************
+ * filament_prompt_box.h *
+ ************************************/
 
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
  *   Written By Marcio Teixeira 2018 - Aleph Objects, Inc.                  *
+ *   Written By Brian Kahl      2023 - FAME3D.                              *
  *                                                                          *
  *   This program is free software: you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -20,47 +21,15 @@
  *   location: <https://www.gnu.org/licenses/>.                             *
  ****************************************************************************/
 
-#include "../config.h"
-#include "../screens.h"
+#pragma once
 
-#ifdef FTDI_FILAMENT_RUNOUT_SCREEN
+#define FTDI_FILAMENT_PROMPT_BOX
+#define FTDI_FILAMENT_PROMPT_BOX_CLASS FilamentPromptBox
 
-using namespace FTDI;
-using namespace ExtUI;
-using namespace Theme;
-
-void FilamentRunoutScreen::onRedraw(draw_mode_t what) {
-  widgets_t w(what);
-  w.heading(   GET_TEXT_F(MSG_FILAMENT));
-  w.toggle( 2, GET_TEXT_F(MSG_RUNOUT_SENSOR), getFilamentRunoutEnabled());
-
-  #if HAS_FILAMENT_RUNOUT_DISTANCE
-    w.heading(GET_TEXT_F(MSG_RUNOUT_DISTANCE_MM));
-    w.units(GET_TEXT_F(MSG_UNITS_MM));
-    w.precision(0);
-    w.color(e_axis);
-    w.adjuster( 10, FPSTR(NUL_STR), getFilamentRunoutDistance_mm(), getFilamentRunoutEnabled());
-    w.increments();
-  #endif
-}
-
-bool FilamentRunoutScreen::onTouchHeld(uint8_t tag) {
-  using namespace ExtUI;
-  #if HAS_FILAMENT_RUNOUT_DISTANCE
-    const float increment = getIncrement();
-  #endif
-  switch (tag) {
-    case 2: setFilamentRunoutEnabled(!getFilamentRunoutEnabled()); break;
-    #if HAS_FILAMENT_RUNOUT_DISTANCE
-      case  10: UI_DECREMENT(FilamentRunoutDistance_mm); break;
-      case  11: UI_INCREMENT(FilamentRunoutDistance_mm); break;
-    #endif
-    default:
-      return false;
-  }
-
-  SaveSettingsDialogBox::settingsChanged();
-  return true;
-}
-
-#endif // FTDI_FILAMENT_RUNOUT_SCREEN
+class FilamentPromptBox : public AlertDialogBox {
+  public:
+    static void onRedraw(draw_mode_t);
+    static bool onTouchEnd(uint8_t);
+    static void hide();
+    static void show();
+};
