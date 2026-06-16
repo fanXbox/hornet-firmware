@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2023 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,13 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#ifndef ENV_VALIDATE_H
-#define ENV_VALIDATE_H
+#pragma once
 
-#if NOT_TARGET(__AVR_AT90USB1286__) && (DISABLED(ALLOW_AT90USB1286P) || NOT_TARGET(__AVR_AT90USB1286P__))
-  #error "Oops! Select 'Teensy++ 2.0' or 'Printrboard' in 'Tools > Board.'"
-#endif
-
-#undef ALLOW_AT90USB1286P
-
+#if NOT_TARGET(IS_TEENSY41)
+  #error "Oops! Select 'Teensy 4.1' in 'Tools > Board.'"
 #endif
