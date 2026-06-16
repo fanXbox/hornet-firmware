@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2022 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,43 +20,28 @@
  *
  */
 
-/**
- * sd/SdFatUtil.cpp
- *
- * Arduino SdFat Library
- * Copyright (c) 2008 by William Greiman
- *
- * This file is part of the Arduino Sd2Card Library
- */
+#include "../inc/MarlinConfigPre.h"
 
-#include "../inc/MarlinConfig.h"
+#if ENABLED(MARLIN_TEST_BUILD)
 
-#if HAS_MEDIA
+#include "../module/endstops.h"
+#include "../module/motion.h"
+#include "../module/planner.h"
+#include "../module/settings.h"
+#include "../module/stepper.h"
+#include "../module/temperature.h"
 
-#include "SdFatUtil.h"
-#include <string.h>
+// Individual tests are localized in each module.
+// Each test produces its own report.
 
-/**
- * Amount of free RAM
- * \return The number of free bytes.
- */
-#ifdef __arm__
+// Startup tests are run at the end of setup()
+void runStartupTests() {
+  // Call post-setup tests here to validate behaviors.
+}
 
-  extern "C" char* sbrk(int incr);
-  int SdFatUtil::FreeRam() {
-    char top;
-    return &top - reinterpret_cast<char*>(sbrk(0));
-  }
+// Periodic tests are run from within loop()
+void runPeriodicTests() {
+  // Call periodic tests here to validate behaviors.
+}
 
-#elif defined(__AVR__)
-
-  extern char* __brkval;
-  extern char __bss_end;
-  int SdFatUtil::FreeRam() {
-    char top;
-    return __brkval ? &top - __brkval : &top - &__bss_end;
-  }
-
-#endif
-
-#endif // HAS_MEDIA
+#endif // MARLIN_TEST_BUILD
