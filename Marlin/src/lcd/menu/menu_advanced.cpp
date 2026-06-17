@@ -140,6 +140,8 @@ void menu_backlash();
 
     #if ENABLED(NONLINEAR_EXTRUSION)
       EDIT_ITEM(bool, MSG_NLE_ON, &stepper.ne.settings.enabled);
+      EDIT_ITEM_FAST(float43, MSG_NLE_A, &stepper.ne.settings.coeff.A, 0.0f, 1.0f);
+      EDIT_ITEM_FAST(float43, MSG_NLE_B, &stepper.ne.settings.coeff.B, 0.0f, 1.0f);
     #endif
 
     #if DISABLED(NO_VOLUMETRICS)
