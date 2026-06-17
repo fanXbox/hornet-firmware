@@ -1864,7 +1864,7 @@
   //#define LONG_FILENAME_WRITE_SUPPORT   // Create / delete files with long filenames via M28, M30, and Binary Transfer Protocol
   //#define M20_TIMESTAMP_SUPPORT         // Include timestamps by adding the 'T' flag to M20 commands
 
-  //#define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu
+  #define SCROLL_LONG_FILENAMES         // Scroll long filenames in the SD card menu
 
   //#define SD_ABORT_NO_COOLDOWN          // Leave the heaters on after Stop Print (not recommended!)
 
@@ -2407,6 +2407,9 @@
 #define NONLINEAR_EXTRUSION
 #if ENABLED(NONLINEAR_EXTRUSION)
   #define NONLINEAR_EXTRUSION_DEFAULT_ON    // Enable if NLE should be ON by default
+  #define NONLINEAR_EXTRUSION_MENU          // per avere il menù
+  #define NONLINEAR_FACTOR_A_DEFAULT 0.0000f   // Il tuo valore A
+  #define NONLINEAR_FACTOR_B_DEFAULT 0.0019f   // Il tuo valore B
 #endif
 
 // @section leveling
