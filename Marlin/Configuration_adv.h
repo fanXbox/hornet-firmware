@@ -2407,9 +2407,7 @@
 #define NONLINEAR_EXTRUSION
 #if ENABLED(NONLINEAR_EXTRUSION)
   #define NONLINEAR_EXTRUSION_DEFAULT_ON    // Enable if NLE should be ON by default
-  #define NONLINEAR_EXTRUSION_MENU          // per avere il menù
-  #define NONLINEAR_FACTOR_A_DEFAULT 0.0000f   // Il tuo valore A
-  #define NONLINEAR_FACTOR_B_DEFAULT 0.0019f   // Il tuo valore B
+  #define STARTUP_COMMANDS "M592 P0 A0.00 B0.0019"
 #endif
 
 // @section leveling
