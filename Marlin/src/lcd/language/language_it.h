@@ -486,8 +486,9 @@ namespace LanguageNarrow_it {
   LSTR MSG_ADVANCE_K_E                    = _UxGT("K advance *");
   LSTR MSG_ADVANCE_TAU_E                  = _UxGT("Tau advance *");
   LSTR MSG_NLE_ON                         = _UxGT("NLE attivo");
-  LSTR MSG_NLE_A                          = _UxGT("Coeff A NLE");
-  LSTR MSG_NLE_B                          = _UxGT("Coeff B NLE");
+  LSTR MSG_NLE_A                          = _UxGT("NLE Quadratico");
+  LSTR MSG_NLE_B                          = _UxGT("NLE Lineare");
+  LSTR MSG_NLE_C                          = _UxGT("NLE Costante");
   LSTR MSG_CONTRAST                       = _UxGT("Contrasto LCD");
   LSTR MSG_BRIGHTNESS                     = _UxGT("Luminosità LCD");
   LSTR MSG_SCREEN_TIMEOUT                 = _UxGT("Timeout LCD (m)");
