@@ -2407,7 +2407,7 @@
 #define NONLINEAR_EXTRUSION
 #if ENABLED(NONLINEAR_EXTRUSION)
   #define NONLINEAR_EXTRUSION_DEFAULT_ON    // Enable if NLE should be ON by default
-  #define STARTUP_COMMANDS "M592 P0 A0.00 B0.0019"
+  #define STARTUP_COMMANDS "M592 P0 A0.0019 B0.00"
 #endif
 
 // @section leveling
