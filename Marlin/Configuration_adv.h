@@ -2407,7 +2407,9 @@
 #define NONLINEAR_EXTRUSION
 #if ENABLED(NONLINEAR_EXTRUSION)
   #define NONLINEAR_EXTRUSION_DEFAULT_ON    // Enable if NLE should be ON by default
-  #define STARTUP_COMMANDS "M592 P0 A0.0019 B0.00"
+  #define NONLINEAR_FACTOR_A 0.0019       // Coefficiente quadratico (default 0.0)
+  #define NONLINEAR_FACTOR_B 0.0000       // Coefficiente lineare (default 0.0)
+  #define NONLINEAR_FACTOR_C 1.00         // Coefficiente costante (default 1.0)
 #endif
 
 // @section leveling
