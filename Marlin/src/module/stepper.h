@@ -296,7 +296,11 @@ constexpr ena_mask_t enable_overlap[] = {
     bool enabled;
     struct {
       float A, B, C;
-      void reset() { A = B = 0.0f; C = 1.0f; }
+      void reset() { 
+        A = NONLINEAR_FACTOR_A; // Prende il valore da Configuration_adv.h
+        B = NONLINEAR_FACTOR_B; // Prende il valore da Configuration_adv.h
+        C = NONLINEAR_FACTOR_C; // Prende il valore da Configuration_adv.h
+        }
     } coeff;
     void reset() {
       enabled = ENABLED(NONLINEAR_EXTRUSION_DEFAULT_ON);
