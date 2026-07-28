@@ -131,6 +131,7 @@ namespace LanguageNarrow_en {
   LSTR MSG_TRAM_BL                        = _UxGT("Back Left");
   LSTR MSG_TRAM_BR                        = _UxGT("Back Right");
   LSTR MSG_MANUAL_MESH                    = _UxGT("Manual Mesh");
+  LSTR MSG_BED_MESH_VIEWER                = _UxGT("Bed Mesh Map");
   LSTR MSG_AUTO_MESH                      = _UxGT("Auto Build Mesh");
   LSTR MSG_AUTO_Z_ALIGN                   = _UxGT("Auto Z-Align");
   LSTR MSG_ITERATION                      = _UxGT("G34 Iteration: %i");

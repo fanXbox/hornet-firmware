@@ -108,6 +108,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_TRAM_BL                        = _UxGT("Dietro sinistra");
   LSTR MSG_TRAM_BR                        = _UxGT("Dietro destra");
   LSTR MSG_MANUAL_MESH                    = _UxGT("Mesh manuale");
+  LSTR MSG_BED_MESH_VIEWER                = _UxGT("Mappa Piatto");
   LSTR MSG_AUTO_MESH                      = _UxGT("Generaz.autom.mesh");
   LSTR MSG_AUTO_Z_ALIGN                   = _UxGT("Allineam.automat. Z");
   LSTR MSG_ITERATION                      = _UxGT("Iterazione G34: %i");
