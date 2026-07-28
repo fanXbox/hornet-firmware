@@ -32,6 +32,10 @@
 
 #include "../../feature/bedlevel/bedlevel.h"
 
+#if ENABLED(BED_MESH_VIEWER)
+  extern void menu_bed_mesh_init();
+#endif
+
 #if HAS_LEVELING
   #include "../../module/planner.h" // for leveling_active, z_fade_height
 #endif
@@ -293,6 +297,14 @@ void menu_probe_level() {
       //
       #if ENABLED(MESH_EDIT_MENU)
         if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
+      #endif
+
+      // >>> INSERIMENTO MAPPA PIATTO REAL-TIME IN MICRON <<<
+      #if ENABLED(BED_MESH_VIEWER)
+        if (is_valid) {
+       // La macro MENU_ITEM riconosce l'oggetto LSTR e applica la localizzazione corretta
+       MENU_ITEM(function, MSG_BED_MESH_VIEWER, menu_bed_mesh_init);
+       }
       #endif
 
       //
