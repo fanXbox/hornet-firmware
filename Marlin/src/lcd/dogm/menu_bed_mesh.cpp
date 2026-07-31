@@ -11,7 +11,7 @@
 #define MESH_MAP_COLS _MIN(GRID_MAX_POINTS_X, 9)
 #define MESH_MAP_ROWS _MIN(GRID_MAX_POINTS_Y, 9)
 
-static int16_t static_micron_values[7][7]; 
+static int16_t static_micron_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
 static bool view_mode_numeric = false;
 static bool view_mode_help = false; // Flag to activate the full-screen exclusive Help Screen
 static uint8_t selected_button = 1; // 1 = VIS, 2 = INFO, 3 = ESC
@@ -24,8 +24,8 @@ void menu_bed_mesh_init() {
   view_mode_numeric = false;  
   view_mode_help = false;
   
-  for (uint8_t x = 0; x < 7; x++) {
-    for (uint8_t y = 0; y < 7; y++) {
+  for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++) {
+    for (uint8_t y = 0; y < GRID_MAX_POINTS_Y; y++) {
       static_micron_values[x][y] = 0;
     }
   }
