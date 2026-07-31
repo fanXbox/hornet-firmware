@@ -8,8 +8,8 @@
 // Official header to expose the 'bedlevel' (mesh_bed_leveling) class instance
 #include "../../feature/bedlevel/bedlevel.h"
 
-#define MESH_MAP_COLS _MIN(GRID_MAX_POINTS_X, 7)
-#define MESH_MAP_ROWS _MIN(GRID_MAX_POINTS_Y, 7)
+#define MESH_MAP_COLS _MIN(GRID_MAX_POINTS_X, 9)
+#define MESH_MAP_ROWS _MIN(GRID_MAX_POINTS_Y, 9)
 
 static int16_t static_micron_values[7][7]; 
 static bool view_mode_numeric = false;
@@ -221,25 +221,20 @@ void menu_bed_mesh_draw() {
     // =========================================================================
     // MODAL NUMERIC VIEW WITH ADAPTIVE ANTI-OVERLAP BOUNDS (FULL WIDTH)
     // =========================================================================
+    const int num_x_spacing = 108 / MESH_MAP_COLS;  
+    const int num_y_spacing = 64 / MESH_MAP_ROWS;   
     
-    // Uses full left screen width (100px) - grid spacing adjusts per column count
-    const int num_x_spacing = 100 / MESH_MAP_COLS;  // Evaluates to 14px for 7x7/6x6, and 20px for 5x5
-    const int num_y_spacing = 54 / MESH_MAP_ROWS;   
-    
-    const int start_num_x = (100 - (MESH_MAP_COLS * num_x_spacing)) / 2;
+    const int start_num_x = (108 - (MESH_MAP_COLS * num_x_spacing)) / 2;
     const int start_num_y = (64 - (MESH_MAP_ROWS * num_y_spacing)) / 2;
 
-    // Dynamic font assignment to prevent overlapping on high density meshes (6x6 and 7x7)
-    int char_w = 5;
-    int char_h = 7;
-    if (MESH_MAP_COLS > 5) {
-      u8g.setFont(u8g_font_4x6); // Ultra-compact 4px width font for 6x6 and 7x7 meshes
-      char_w = 4;
-      char_h = 6;
+    // Hardcoded bounding box widths for strict non-proportional evaluation
+    int char_w = 5, char_h = 7;
+    if (MESH_MAP_COLS > 7 || MESH_MAP_ROWS > 7) {
+      u8g.setFont(u8g_font_micro); char_w = 3; char_h = 5;
+    } else if (MESH_MAP_COLS > 5 || MESH_MAP_ROWS > 5) {
+      u8g.setFont(u8g_font_4x6); char_w = 4; char_h = 6;
     } else {
-      u8g.setFont(u8g_font_5x7); // Standard 5px width font for meshes up to 5x5
-      char_w = 5;
-      char_h = 7;
+      u8g.setFont(u8g_font_5x7); char_w = 5; char_h = 7;
     }
 
     for (uint8_t x = 0; x < MESH_MAP_COLS; x++) {
@@ -259,12 +254,25 @@ void menu_bed_mesh_draw() {
           micron_val = -micron_val; 
           itoa(micron_val, buf, 10);
           
+          // Static math calculation with dynamic tracking and 1px subtraction
           int text_len = strlen(buf);
-          int text_width = text_len * char_w + (text_len - 1); 
+          
+          // Extracts the condition to understand if we are in 8x8/9x9 (Tier 3) or lower
+          const bool is_dense = (MESH_MAP_COLS > 7 || MESH_MAP_ROWS > 7);
+
+          int text_width = is_dense 
+            ? ((text_len * char_w) + (text_len - 1)) - 1
+            : u8g.getStrWidth(buf) - 1;
+            
           int draw_x = cell_center_x - (text_width / 2);  
 
-          // Draws white bounding box tailored to the currently active font geometry
-          u8g.drawBox(draw_x - 1, draw_y - char_h, text_width + 2, char_h + 2);
+          // For dense meshes (Tier 3), we shift the box start 1px to the left (draw_x - 2) and 1px up (draw_y - char_h - 1)
+          // while expanding width (+3) and height (+2) to inject the missing 1px border on top and left.
+          if (is_dense) {
+            u8g.drawBox(draw_x - 2, draw_y - char_h - 1, text_width + 3, char_h + 2);
+          } else {
+            u8g.drawBox(draw_x - 1, draw_y - char_h, text_width + 2, char_h + 1); // Retains 7x7 perfection
+          }
           
           u8g.setColorIndex(0);
           u8g.drawStr(draw_x, draw_y, buf);
@@ -274,23 +282,29 @@ void menu_bed_mesh_draw() {
           // --- POSITIVE VALUE (Standard bright text centered layout) ---
           itoa(micron_val, buf, 10);
           
+          // Static non-proportional grid width math calculation
           int text_len = strlen(buf);
-          int text_width = text_len * char_w + (text_len - 1);
+          int text_width = (text_len * char_w) + (text_len - 1); 
           int draw_x = cell_center_x - (text_width / 2); 
 
           u8g.drawStr(draw_x, draw_y, buf);
         }
       }
     }
-  } 
+  }
   else {
+    // =========================================================================
     // GRAPHICAL VIEW: BALANCED BARYCENTRIC ADAPTIVE GRID
-    // EXPANDED AREA TO 56px: Fixes 7x7 mesh overlap from 2px down to exactly 1px maximum
-    const int grid_y_spacing = 56 / MESH_MAP_ROWS;   
-    const int grid_x_spacing = grid_y_spacing; // Enforces a perfect square cell boundary
+    // =========================================================================
+    const int max_possible_x_space = 108 / MESH_MAP_COLS;
+    const int max_possible_y_space = 64 / MESH_MAP_ROWS;
+
+    // Enforces a perfect square cell using the smallest available boundary as the master spacing
+    const int grid_y_spacing = (max_possible_x_space < max_possible_y_space) ? max_possible_x_space : max_possible_y_space;   
+    const int grid_x_spacing = grid_y_spacing; 
 
     const int total_grid_w = MESH_MAP_COLS * grid_x_spacing;
-    const int start_x = (100 - total_grid_w) / 2;          
+    const int start_x = (108 - total_grid_w) / 2;          
     const int start_y = (64 - (MESH_MAP_ROWS * grid_y_spacing)) / 2;          
 
     // FINAL SIMMETRICAL POSITIVE VECTOR MAP (48 ELEMENTS FOR 7x7 EXTREMUMS)
@@ -301,6 +315,27 @@ void menu_bed_mesh_draw() {
     const int8_t path_neg_x[] = { -3, -3, 3, 3, -2, -3, -3, -2, 2, 3, 3, 2, -1, -3, -3, -1, 1, 3, 3, 1, -2, -3, -2, 0, 2, 3, 2, 0, -1, -2, -2, -1, 1, 2, 2, 1, -2, 0, 2, 0, -1, -1, 1, 1, -1, 0, 1, 0 };
     const int8_t path_neg_y[] = { -3,  3, 3, -3, -3, -2, 2, 3, 3, 2, -2, -3, -3, -1, 1, 3, 3, 1, -1, -3, -2, 0, 2, 3, 2, 0, -2, -3, -2, -1, 1, 2, 2, 1, -1, -2, 0, 2, 0, -2, -1, 1, 1, -1, 0, 1, 0, -1 };
 
+    // >>> SPECIFIC SEQUENCES FOR 8x8 AND 9x9 DENSE MESHES <<<
+    const int8_t path_dense_pos_x[] = {  0, 1, 0, -1, 1, 1, -1, -1,  0, 2, 0, -2, 1, 2, 2, 1, -1, -2, -2, -1, 2, 2, -2, -2}; 
+    const int8_t path_dense_pos_y[] = { -1, 0, 1,  0, -1, 1,  1, -1, -2, 0, 2,  0, -2, -1, 1, 2,  2, 1, -1, -2, -2, 2, 2, -2};
+    
+    const int8_t path_dense_neg_x[] = { -2, -2, 2, 2, -1, -2, -2, -1, 1, 2, 2, 1, -2, 0, 2, 0, -1, -1, 1, 1, -1, 0, 1, 0 };
+    const int8_t path_dense_neg_y[] = { -2, 2, 2, -2, -2, -1, 1, 2, 2, 1, -1, -2, 0, 2, 0, -2, -1, 1, 1, -1, 0, 1, 0, -1 };
+
+    // Multi-tier structural clearance heuristic based on critical threshold boundaries
+    const int8_t *current_pos_x = path_pos_x, *current_pos_y = path_pos_y;
+    const int8_t *current_neg_x = path_neg_x, *current_neg_y = path_neg_y;
+    int max_allowed_pixels = 48, frame_offset = 4, frame_size = 9;
+
+    // Trigger Tier 2 if rows exceed 7 OR if columns exceed the 11-point horizontal threshold
+    if (MESH_MAP_ROWS > 7 || MESH_MAP_COLS > 11) {
+      current_pos_x = path_dense_pos_x; current_pos_y = path_dense_pos_y;
+      current_neg_x = path_dense_neg_x; current_neg_y = path_dense_neg_y;
+      max_allowed_pixels = 24; 
+      frame_offset = 3; 
+      frame_size = 7; // Forces the safer, tight 7x7 frame layout
+    }
+    
     for (uint8_t x = 0; x < MESH_MAP_COLS; x++) {
       for (uint8_t y = 0; y < MESH_MAP_ROWS; y++) {
         int16_t val = static_micron_values[x][y]; 
@@ -316,7 +351,9 @@ void menu_bed_mesh_draw() {
         #endif
 
         int pixels_to_draw = (int)(abs(val) / (step_micron > 0 ? step_micron : 25));
-        if (pixels_to_draw > 48) pixels_to_draw = 48; 
+        
+        // FIXED: Clamped using the dynamic variable to prevent out-of-bounds memory read
+        if (pixels_to_draw > max_allowed_pixels) pixels_to_draw = max_allowed_pixels; 
 
         if (pixels_to_draw == 0) {
           u8g.drawPixel(center_x, center_y); // Baseline unwarped flat reference pixel
@@ -326,14 +363,17 @@ void menu_bed_mesh_draw() {
             // HIGH: Barycentric cluster grows outward using bright pixels
             u8g.drawPixel(center_x, center_y); 
             for (int i = 0; i < pixels_to_draw; i++) {
-              u8g.drawPixel(center_x + path_pos_x[i], center_y + path_pos_y[i]);
+              // FIXED: Uses active pointer tracking instead of hardcoded 7x7 maps
+              u8g.drawPixel(center_x + current_pos_x[i], center_y + current_pos_y[i]);
             }
           } 
           else {
-            // LOW: 9x9 frame bounds an inward-collapsing specular matrix
-            u8g.drawFrame(center_x - 4, center_y - 4, 9, 9);
+            // LOW: FIXED - Draws frame using dynamic pre-calculated sizing parameters
+            u8g.drawFrame(center_x - frame_offset, center_y - frame_offset, frame_size, frame_size);
+            
             for (int i = 0; i < pixels_to_draw; i++) {
-              u8g.drawPixel(center_x + path_neg_x[i], center_y + path_neg_y[i]);
+              // FIXED: Uses active pointer tracking instead of hardcoded 7x7 maps
+              u8g.drawPixel(center_x + current_neg_x[i], center_y + current_neg_y[i]);
             }
           }
         }
@@ -341,41 +381,40 @@ void menu_bed_mesh_draw() {
     }
   }
 
-  // ACTION SIDEBAR NAVIGATION CONTROLS (X: 102-128)
+  // ACTION SIDEBAR NAVIGATION CONTROLS (X: 109-128)
   u8g.setFont(u8g_font_6x10); 
-  u8g.drawVLine(101, 0, 64); 
 
   // BUTTON 1: VIS (Pixel Y: 2-15)
   if (selected_button == 1) {
-    u8g.drawBox(103, 2, 23, 13);       
+    u8g.drawBox(109, 2, 23, 13);       
     u8g.setColorIndex(0);              
-    u8g.drawStr(106, 12, "VIS");
+    u8g.drawStr(111, 12, "VIS");
     u8g.setColorIndex(1);              
   } else {
-    u8g.drawFrame(103, 2, 23, 13);     
-    u8g.drawStr(106, 12, "VIS");
+    u8g.drawFrame(109, 2, 23, 13);     
+    u8g.drawStr(111, 12, "VIS");
   }
 
   // BUTTON 2: INF (Pixel Y: 24-37)
   if (selected_button == 2) {
-    u8g.drawBox(103, 24, 23, 13);      
+    u8g.drawBox(109, 24, 23, 13);      
     u8g.setColorIndex(0);              
-    u8g.drawStr(106, 34, "INF");
+    u8g.drawStr(111, 34, "INF");
     u8g.setColorIndex(1);              
   } else {
-    u8g.drawFrame(103, 24, 23, 13);    
-    u8g.drawStr(106, 34, "INF");
+    u8g.drawFrame(109, 24, 23, 13);    
+    u8g.drawStr(111, 34, "INF");
   }
 
   // BUTTON 3: ESC (Pixel Y: 46-59)
   if (selected_button == 3) {
-    u8g.drawBox(103, 46, 23, 13);      
+    u8g.drawBox(109, 46, 23, 13);      
     u8g.setColorIndex(0);              
-    u8g.drawStr(106, 56, "ESC");
+    u8g.drawStr(111, 56, "ESC");
     u8g.setColorIndex(1);              
   } else {
-    u8g.drawFrame(103, 46, 23, 13);    
-    u8g.drawStr(106, 56, "ESC");
+    u8g.drawFrame(109, 46, 23, 13);    
+    u8g.drawStr(111, 56, "ESC");
   }
 }
 
