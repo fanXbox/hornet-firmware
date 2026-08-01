@@ -8,8 +8,8 @@
 // Official header to expose the 'bedlevel' (mesh_bed_leveling) class instance
 #include "../../feature/bedlevel/bedlevel.h"
 
-#define MESH_MAP_COLS _MIN(GRID_MAX_POINTS_X, 9)
-#define MESH_MAP_ROWS _MIN(GRID_MAX_POINTS_Y, 9)
+#define MESH_MAP_COLS _MIN(GRID_MAX_POINTS_X, 10)
+#define MESH_MAP_ROWS _MIN(GRID_MAX_POINTS_Y, 10)
 
 static int16_t static_micron_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
 static bool view_mode_numeric = false;
@@ -221,10 +221,11 @@ void menu_bed_mesh_draw() {
     // =========================================================================
     // MODAL NUMERIC VIEW WITH ADAPTIVE ANTI-OVERLAP BOUNDS (FULL WIDTH)
     // =========================================================================
-    const int num_x_spacing = 108 / MESH_MAP_COLS;  
+    const int max_w = (MESH_MAP_COLS > 9) ? 120 : 108;
+    const int num_x_spacing = max_w / MESH_MAP_COLS;  
     const int num_y_spacing = 64 / MESH_MAP_ROWS;   
-    
-    const int start_num_x = (108 - (MESH_MAP_COLS * num_x_spacing)) / 2;
+
+    const int start_num_x = (max_w - (MESH_MAP_COLS * num_x_spacing)) / 2;
     const int start_num_y = (64 - (MESH_MAP_ROWS * num_y_spacing)) / 2;
 
     // Hardcoded bounding box widths for strict non-proportional evaluation
@@ -269,7 +270,7 @@ void menu_bed_mesh_draw() {
           // For dense meshes (Tier 3), we shift the box start 1px to the left (draw_x - 2) and 1px up (draw_y - char_h - 1)
           // while expanding width (+3) and height (+2) to inject the missing 1px border on top and left.
           if (is_dense) {
-            u8g.drawBox(draw_x - 2, draw_y - char_h - 1, text_width + 3, char_h + 2);
+            u8g.drawBox(draw_x - 1, draw_y - char_h - 1, text_width + 3, char_h + 2);
           } else {
             u8g.drawBox(draw_x - 1, draw_y - char_h, text_width + 2, char_h + 1); // Retains 7x7 perfection
           }
@@ -384,37 +385,60 @@ void menu_bed_mesh_draw() {
   // ACTION SIDEBAR NAVIGATION CONTROLS (X: 109-128)
   u8g.setFont(u8g_font_6x10); 
 
-  // BUTTON 1: VIS (Pixel Y: 2-15)
+  // Dynamic sidebar boundary assignment: 120px for ultra-dense meshes, 110px for standard ones
+  const bool is_ultra_dense = (view_mode_numeric && MESH_MAP_COLS > 9);
+  const int btn_x = is_ultra_dense ? 121 : 109;
+  const int btn_w = is_ultra_dense ? 10 : 21; 
+  
+  // FIXED: Dynamic vertical spacing to achieve absolute equidistance in both configurations
+  const int inf_y = is_ultra_dense ? 19 : 21; 
+  const int esc_y = is_ultra_dense ? 37 : 41; 
+  const int esc_h = is_ultra_dense ? 27 : 13; // Handwired 27px tall box to fit 7px uppercase letters perfectly
+
+  // --- BUTTON 1: VIS / V ---
   if (selected_button == 1) {
-    u8g.drawBox(109, 2, 23, 13);       
-    u8g.setColorIndex(0);              
-    u8g.drawStr(111, 12, "VIS");
-    u8g.setColorIndex(1);              
+    u8g.drawBox(btn_x, 1, btn_w, 13);
+    u8g.setColorIndex(0);
+    u8g.drawStr(btn_x + 2, 11, is_ultra_dense ? "V" : "VIS");
+    u8g.setColorIndex(1);
   } else {
-    u8g.drawFrame(109, 2, 23, 13);     
-    u8g.drawStr(111, 12, "VIS");
+    u8g.drawFrame(btn_x, 1, btn_w, 13);
+    u8g.drawStr(btn_x + 2, 11, is_ultra_dense ? "V" : "VIS");
   }
 
-  // BUTTON 2: INF (Pixel Y: 24-37)
+  // --- BUTTON 2: INF / I ---
   if (selected_button == 2) {
-    u8g.drawBox(109, 24, 23, 13);      
-    u8g.setColorIndex(0);              
-    u8g.drawStr(111, 34, "INF");
-    u8g.setColorIndex(1);              
+    u8g.drawBox(btn_x, inf_y, btn_w, 13);
+    u8g.setColorIndex(0);
+    u8g.drawStr(btn_x + 2, inf_y + 10, is_ultra_dense ? "I" : "INF"); 
+    u8g.setColorIndex(1);
   } else {
-    u8g.drawFrame(109, 24, 23, 13);    
-    u8g.drawStr(111, 34, "INF");
+    u8g.drawFrame(btn_x, inf_y, btn_w, 13);
+    u8g.drawStr(btn_x + 2, inf_y + 10, is_ultra_dense ? "I" : "INF");
   }
 
-  // BUTTON 3: ESC (Pixel Y: 46-59)
+  // --- BUTTON 3: ESC / VERTICAL ESC ---
   if (selected_button == 3) {
-    u8g.drawBox(109, 46, 23, 13);      
-    u8g.setColorIndex(0);              
-    u8g.drawStr(111, 56, "ESC");
-    u8g.setColorIndex(1);              
+    u8g.drawBox(btn_x, esc_y, btn_w, esc_h); 
+    u8g.setColorIndex(0);
+    if (is_ultra_dense) {
+      // FIXED: Perfectly balanced 1px margins with 7px tall characters over 27px box bounds
+      u8g.drawStr(btn_x + 2, esc_y + 9,  "E"); // Top letter (baseline at +8)
+      u8g.drawStr(btn_x + 2, esc_y + 17, "S"); // Middle letter (baseline at +16)
+      u8g.drawStr(btn_x + 2, esc_y + 25, "C"); // Bottom letter (baseline at +24)
+    } else {
+      u8g.drawStr(btn_x + 2, esc_y + 10, "ESC"); 
+    }
+    u8g.setColorIndex(1);
   } else {
-    u8g.drawFrame(109, 46, 23, 13);    
-    u8g.drawStr(111, 56, "ESC");
+    u8g.drawFrame(btn_x, esc_y, btn_w, esc_h); 
+    if (is_ultra_dense) {
+      u8g.drawStr(btn_x + 2, esc_y + 9,  "E");
+      u8g.drawStr(btn_x + 2, esc_y + 17, "S");
+      u8g.drawStr(btn_x + 2, esc_y + 25, "C");
+    } else {
+      u8g.drawStr(btn_x + 2, esc_y + 10, "ESC");
+    }
   }
 }
 
