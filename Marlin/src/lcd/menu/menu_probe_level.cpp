@@ -20,6 +20,7 @@
  *
  */
 
+
 //
 // Probe and Level (Calibrate?) Menu
 //
@@ -32,11 +33,9 @@
 
 #include "../../feature/bedlevel/bedlevel.h"
 
-#if ENABLED(BED_MESH_VIEWER)
-  extern void menu_bed_mesh_init();
-#endif
-
+// --- MARLIN STANDARD LOGICAL CONDITION FOR MOTION CORE INCLUSIONS ---
 #if HAS_LEVELING
+  #include "../../module/motion.h"
   #include "../../module/planner.h" // for leveling_active, z_fade_height
 #endif
 
@@ -53,9 +52,13 @@
   #include "../tft/touch.h"
 #endif
 
+// --- PROTECTED PROTOTYPE FOR GRAPHICAL REAL-TIME MAP ---
+#if ENABLED(BED_MESH_VIEWER)
+  extern void menu_bed_mesh_init();
+#endif
+
 #if ENABLED(LCD_BED_LEVELING) && ANY(PROBE_MANUALLY, MESH_BED_LEVELING)
 
-  #include "../../module/motion.h"
   #include "../../gcode/queue.h"
 
   //
@@ -232,6 +235,10 @@
 
 #endif // MESH_EDIT_MENU
 
+#if ENABLED(BED_MESH_VIEWER)
+  extern void menu_bed_mesh_init();
+#endif
+
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   void _lcd_ubl_level_bed();
 #endif
@@ -299,12 +306,14 @@ void menu_probe_level() {
         if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
       #endif
 
-      // >>> INSERIMENTO MAPPA PIATTO REAL-TIME IN MICRON <<<
+      // 
+      // >>> REAL-TIME PLATE MAP INSERTION IN MICRON <<<
+      // 
       #if ENABLED(BED_MESH_VIEWER)
         if (is_valid) {
-       // La macro MENU_ITEM riconosce l'oggetto LSTR e applica la localizzazione corretta
-       MENU_ITEM(function, MSG_BED_MESH_VIEWER, menu_bed_mesh_init);
-       }
+        // The MENU_ITEM macro recognizes the LSTR object and applies the correct localization
+        MENU_ITEM(function, MSG_BED_MESH_VIEWER, menu_bed_mesh_init);
+        }
       #endif
 
       //
