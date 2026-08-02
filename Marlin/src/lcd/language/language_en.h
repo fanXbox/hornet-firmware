@@ -418,6 +418,7 @@ namespace LanguageNarrow_en {
   LSTR MSG_BAD_HEATER_ID                  = _UxGT("Bad extruder.");
   LSTR MSG_TEMP_TOO_HIGH                  = _UxGT("Temperature too high.");
   LSTR MSG_TEMP_TOO_LOW                   = _UxGT("Temperature too low");
+  LSTR DGUS_MSG_TEMP_TOO_LOW              = _UxGT("Err: Temp Too Low");
 
   LSTR MSG_PID_BAD_HEATER_ID              = _UxGT("Autotune failed! Bad extruder.");
   LSTR MSG_PID_TEMP_TOO_HIGH              = _UxGT("Autotune failed! Temperature too high.");
@@ -511,9 +512,9 @@ namespace LanguageNarrow_en {
   LSTR MSG_ADVANCE_K_E                    = _UxGT("Advance K *");
   LSTR MSG_ADVANCE_TAU_E                  = _UxGT("Advance Tau *");
   LSTR MSG_NLE_ON                         = _UxGT("NLE enabled");
-  LSTR MSG_NLE_A                          = _UxGT("NLE Quadratic");
-  LSTR MSG_NLE_B                          = _UxGT("NLE Linear");
-  LSTR MSG_NLE_C                          = _UxGT("NLE Constant");
+  LSTR MSG_NLE_A                          = _UxGT("-Quadratic");
+  LSTR MSG_NLE_B                          = _UxGT("-Linear");
+  LSTR MSG_NLE_C                          = _UxGT("-Constant");
   LSTR MSG_CONTRAST                       = _UxGT("LCD Contrast");
   LSTR MSG_BRIGHTNESS                     = _UxGT("LCD Brightness");
   LSTR MSG_SCREEN_TIMEOUT                 = _UxGT("LCD Timeout (m)");
