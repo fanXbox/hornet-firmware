@@ -116,7 +116,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_ACCURACY_ACHIEVED              = _UxGT("Precisione raggiunta");
   LSTR MSG_LEVEL_BED_HOMING               = _UxGT("Home assi XYZ");
   LSTR MSG_LEVEL_BED_WAITING              = _UxGT("Premi per iniziare");
-  LSTR MSG_LEVEL_BED_NEXT_POINT           = _UxGT("Punto successivo");
+  LSTR MSG_LEVEL_BED_NEXT_POINT           = _UxGT("Rileva punto");
   LSTR MSG_LEVEL_BED_DONE                 = _UxGT("Livel. terminato!");
   LSTR MSG_Z_FADE_HEIGHT                  = _UxGT("Dissolvi altezza");
   LSTR MSG_SET_HOME_OFFSETS               = _UxGT("Imp. offset home");
@@ -395,6 +395,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_BAD_HEATER_ID                  = _UxGT("Estrusore invalido.");
   LSTR MSG_TEMP_TOO_HIGH                  = _UxGT("Temp.troppo alta.");
   LSTR MSG_TEMP_TOO_LOW                   = _UxGT("Temp. troppo bassa");
+  LSTR DGUS_MSG_TEMP_TOO_LOW              = _UxGT("Err: Temp Troppo Bassa");
 
   LSTR MSG_PID_BAD_HEATER_ID              = _UxGT("Calibrazione fallita! Estrusore errato.");
   LSTR MSG_PID_TEMP_TOO_HIGH              = _UxGT("Calibrazione fallita! Temperatura troppo alta.");
